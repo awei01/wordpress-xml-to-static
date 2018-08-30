@@ -5,3 +5,8 @@ This is a quick and dirty repository. You can try it and see if it suits your ne
 ## Features
 * Creates a `data` folder with `authors.yml` and `categories.yml`
 * Creates `drafts` folder and `posts` folder with your content. The content has most of the meta data converted to `frontmatter` while `html` is converted to `md` using `turndown`
+
+## How to use
+* Put your `wordpress` exported `xml` file in `input` directory
+* You can use `npm run dev` to view the console as you rip through the `xml` data
+* Use `npm run build` to convert the data and save it to `_output`
