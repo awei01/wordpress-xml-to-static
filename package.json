@@ -1,7 +1,7 @@
 {
-  "name": "importer",
-  "version": "1.0.0",
-  "description": "",
+  "name": "wordpress-xml-to-static",
+  "version": "0.0.0",
+  "description": "Quick and dirty repo for converting wordpress.xml to files suitable for static site generator",
   "main": "index.js",
   "scripts": {
     "dev": "yarn run webpack-dev-server -d",
