@@ -77,11 +77,11 @@ gulp.task('build', function () {
 
     // generate drafts folder
     .pipe(through.obj(function (file, encoding, done) {
-      const { dest } = gulpConfigs.build.draft
+      const { dest, postProcess } = gulpConfigs.build.draft
       if (_ifAlreadyCompleted(_completed, dest, done, file)) { return }
 
       console.log(`Preparing draft files [${dest}]`)
-      const files = _makePosts(dest, _data.draft)
+      const files = _makePosts(dest, postProcess, _data.draft)
 
       pushFilesToStream(this, files)
       _markAsCompleted(_completed, dest, done, file)
@@ -89,11 +89,11 @@ gulp.task('build', function () {
 
     // generate posts folder
     .pipe(through.obj(function (file, encoding, done) {
-      const { dest } = gulpConfigs.build.publish
+      const { dest, postProcess } = gulpConfigs.build.publish
       if (_ifAlreadyCompleted(_completed, dest, done, file)) { return }
 
       console.log(`Preparing publish files [${dest}]`)
-      const files = _makePosts(dest, _data.publish)
+      const files = _makePosts(dest, postProcess, _data.publish)
 
       pushFilesToStream(this, files)
       _markAsCompleted(_completed, dest, done, file)
@@ -112,13 +112,15 @@ gulp.task('build', function () {
 
 gulp.task('default', gulp.series('clean', 'build'))
 
-function _makePosts (folder, posts) {
+function _makePosts (folder, postProcess, posts) {
   return Object.keys(posts).map((key) => {
     const post = posts[key]
     const meta = omit(['contents', 'date', 'slug'], post)
     const header = `---\n${objToYaml(meta)}---`
     const body = htmlToMd(post.contents)
-    const contents = `${header}\n${body}`
+    let contents = `${header}\n${body}`
+    contents = postProcess ? postProcess(contents) : contents
+
     const date = folder === 'drafts'
       ? ''
       : _extractDate(post.date)

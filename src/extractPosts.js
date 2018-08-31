@@ -28,18 +28,18 @@ function _extractPost (container, accumulator, post) {
 
   const key = post['wp:post_id']
 
-  const path = container.site.extractPath(post['link'])
+  const path = _extractPath(container.site.absolutePath, post['link'])
   const title = _extractTitle(post)
   const slug = _extractSlug(post, title)
 
   const date = post['wp:post_date_gmt']
-  const author = container.authors.resolve(post['dc:creator'])
+  const author = _extractAuthor(container.authors.resolve, post['dc:creator'])
   const contents = post['content:encoded']
 
-  const categories = container.categories.resolve(_extractCategories(post['category']))
+  const categories = _extractCategories(container.categories.resolve, post['category'])
   const tags = _extractTags(post['category'])
 
-  const featuredImage = _extractThumbnailId(post)
+  const featuredImage = _extractFeaturedImage(container.site.absolutePath, container.attachments.resolve, post)
 
   accumulator[key] = {
     path,
@@ -59,29 +59,14 @@ function _extractPost (container, accumulator, post) {
   return accumulator
 }
 
-function _extractCategories (input) {
-  input = Array.isArray(input) ? input : [input]
-  return input.filter(pathEq(['$', 'domain'], 'category'))
-    .map(viewPath(['$', 'nicename']))
-}
-
-function _extractTags (input) {
-  input = Array.isArray(input) ? input : [input]
-  return input.filter(pathEq(['$', 'domain'], 'post_tag'))
-    .map(viewPath(['_']))
-}
-
-function _extractThumbnailId (post) {
-  let metadata = post['wp:postmeta']
-  metadata = Array.isArray(metadata) ? metadata : [metadata]
-  return metadata.filter(propEq('wp:meta_key', '_thumbnail_id'))
-    .reduce((acc, thumb) => {
-      if (acc) {
-        console.warn(`That's weird, this post has more than one _thumbnail_id [${post['wp:post_id']}]`)
-        return acc
-      }
-      return thumb['wp:meta_value']
-    }, null)
+function _extractPath (resolveFn, url) {
+  let result = resolveFn(url)
+  if (result.charAt(result.length - 1) !== '/') {
+    // add the trailing slash
+    result += '/'
+  }
+  // console.log(result)
+  return result
 }
 
 function _extractTitle (post) {
@@ -103,3 +88,38 @@ function _extractSlug (post, title) {
   }
   return slugify(title)
 }
+
+function _extractAuthor (resolveAuthor, author) {
+  return resolveAuthor(author)
+}
+function _extractCategories (resolveCategories, input) {
+  input = Array.isArray(input) ? input : [input]
+  const filtered = input.filter(pathEq(['$', 'domain'], 'category'))
+    .map(viewPath(['$', 'nicename']))
+  return resolveCategories(filtered)
+}
+
+function _extractTags (input) {
+  input = Array.isArray(input) ? input : [input]
+  return input.filter(pathEq(['$', 'domain'], 'post_tag'))
+    .map(viewPath(['_']))
+}
+
+function _extractFeaturedImage (resolvePath, resolveThumbId, post) {
+  const id = _extractThumbnailId(post)
+  const url = id && resolveThumbId(id)
+  return url && resolvePath(url)
+}
+function _extractThumbnailId (post) {
+  let metadata = post['wp:postmeta']
+  metadata = Array.isArray(metadata) ? metadata : [metadata]
+  return metadata.filter(propEq('wp:meta_key', '_thumbnail_id'))
+    .reduce((acc, thumb) => {
+      if (acc) {
+        console.warn(`That's weird, this post has more than one _thumbnail_id [${post['wp:post_id']}]`)
+        return acc
+      }
+      return thumb['wp:meta_value']
+    }, null)
+}
+

@@ -27,6 +27,10 @@ const clean = {
   ]
 }
 
+const postProcess = (input) => {
+  return input
+}
+
 const build = {
   src: path.resolve(input.dir, input.file),
   authors: {
@@ -36,11 +40,13 @@ const build = {
     dest: '_data/categories.yml'
   },
   draft: {
-    dest: 'drafts'
+    dest: 'drafts',
+    postProcess
   },
   publish: {
-    dest: 'posts'
-  }
+    dest: 'posts',
+    postProcess
+  },
 }
 
 module.exports = {

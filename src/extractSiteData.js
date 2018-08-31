@@ -3,10 +3,12 @@ const curry = require('ramda/src/curry')
 module.exports = curry(function (container, input) {
   return new Promise((resolve) => {
     const baseUrl = input['wp:base_blog_url']
-    function extractPath (url) {
-      return url.replace(baseUrl, '')
+    const site = container.site = { baseUrl }
+
+    function absolutePath (input) {
+      return input.replace(baseUrl, '')
     }
-    container.site = { baseUrl, extractPath }
+    Object.defineProperty(site, 'absolutePath', { value: absolutePath })
     resolve(input)
   })
 })
