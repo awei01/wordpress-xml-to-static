@@ -15,13 +15,15 @@ const htmlToMd = require('./src/htmlToMd')
 const sortObjKeys = require('./src/sortObjKeys')
 const objToYaml = require('./src/objToYaml')
 
+const configs = require('./configs')
+
 const _dirs = {
   src: './input',
   dest: './_output'
 }
 
 gulp.task('clean', function () {
-  return gulp.src(_dirs.dest, { allowEmpty: true })
+  return gulp.src(configs.clean.src, { allowEmpty: true })
     .pipe(clean())
 })
 

@@ -1,20 +1,15 @@
 const webpack = require('webpack')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const configs = require('./configs')
+const merge = require('webpack-merge')
 
-module.exports = {
-  entry: {
-    main: path.resolve(__dirname, 'src', 'main.js')
-  },
+module.exports = merge({
   resolve: {
     extensions: ['.js'],
     modules: ['node_modules'],
   },
   output: {
-    // path: where to build on file system
-    path: path.resolve(__dirname, 'build'),
-    // publicPath: src or href path to file
-    // (https://webpack.github.io/docs/configuration.html#output-publicpath)
     publicPath: '/',
     filename: '[name].js'
   },
@@ -31,9 +26,8 @@ module.exports = {
     net: 'empty',
   },
   devServer: {
-    contentBase: path.resolve(__dirname, 'input'),
     port: 3000,
     overlay: true,
     inline: true,
   }
-}
+}, configs.webpack)
