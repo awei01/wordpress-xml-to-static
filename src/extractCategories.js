@@ -7,7 +7,7 @@ module.exports = curry(function (container, input) {
     const items = input['wp:category']
     const categories = container.categories = items.reduce(_extractCategory, {})
     const keys = Object.keys(categories)
-    console.log(`Extracted [${keys.length}] categories [${keys.join(' | ')}]`)
+    console.log(`Extracted [${keys.length}] categories`)
 
     // define a resolve function
     function resolveValidCategories (input) {

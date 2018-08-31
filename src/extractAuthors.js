@@ -8,7 +8,7 @@ module.exports = curry(function (container, input) {
     const authors = container.authors = items.reduce(_extractAuthor, {})
 
     const keys = Object.keys(authors)
-    console.log(`Extracted [${keys.length}] authors [${keys.join(' | ')}]`)
+    console.log(`Extracted [${keys.length}]`)
 
     function extractValidAuthor (input) {
       if (!contains(input, keys)) {
