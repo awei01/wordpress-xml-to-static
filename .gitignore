@@ -1,3 +1,7 @@
-build
+# Project stuff
 _output
+configs.js
+
+# Node stuff
 node_modules
+
