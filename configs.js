@@ -4,7 +4,7 @@ const root = __dirname
 const dest = './_output'
 
 const input = {
-  src: './import',
+  dir: './import',
   file: 'input.xml'
 }
 
@@ -16,20 +16,40 @@ const webpack = {
     path: path.resolve(root, dest)
   },
   devServer: {
-    contentBase: path.resolve(root, input.src),
+    contentBase: path.resolve(root, input.dir),
   }
 }
 
-// configs.clean = {
-//   src: [
-//     path.resolve(configs.dest, '_data/!(site).yml'),
-//     path.resolve(configs.dest, '+(drafts|posts)')
-//   ]
-// }
+const clean = {
+  src: [
+    path.resolve(dest, '_data/!(site).yml'),
+    path.resolve(dest, '+(drafts|posts)')
+  ]
+}
+
+const build = {
+  src: path.resolve(input.dir, input.file),
+  authors: {
+    dest: '_data/authors.yml'
+  },
+  categories: {
+    dest: '_data/categories.yml'
+  },
+  draft: {
+    dest: 'drafts'
+  },
+  publish: {
+    dest: 'posts'
+  }
+}
 
 module.exports = {
   root,
   dest,
   input,
-  webpack
+  webpack,
+  gulp: {
+    clean,
+    build
+  }
 }
